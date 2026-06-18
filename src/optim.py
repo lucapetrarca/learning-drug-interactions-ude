@@ -53,7 +53,7 @@ def train_ude_alternating(model, t_span, u0, target_data, epochs_adam=300, epoch
         loss_sigma.backward()
         adam_sigma.step()
         
-        if epoch % 50 == 0:
+        if epoch % 1000 == 0:
             print(f"Época {epoch:03d} | NLL Total: {loss_theta.item():.4f}")
             
     print("\nFASE 2: L-BFGS")
@@ -69,7 +69,7 @@ def train_ude_alternating(model, t_span, u0, target_data, epochs_adam=300, epoch
 
     for epoch in range(epochs_lbfgs):
         loss_val = lbfgs_theta.step(closure)
-        if epoch % 10 == 0:
+        if epoch % 100 == 0:
             print(f"L-BFGS Paso {epoch:02d} | NLL: {loss_val.item():.6f}")
 
     #Se imprimen los valores finales del ruido

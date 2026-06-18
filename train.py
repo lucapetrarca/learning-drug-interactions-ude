@@ -35,8 +35,8 @@ def main():
         t_span=t_span,
         u0=u0,
         target_data=target_data,
-        epochs_adam=1000,
-        epochs_lbfgs=50
+        epochs_adam=10000,
+        epochs_lbfgs=500
     )
 
     #Se guardan los parámetros a disco
