@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 from torchdiffeq import odeint_adjoint as odeint
+import torch.nn.functional as F
 
 #La red neuronal InteractionNN aproxima la tasa no lineal de interacción/eliminación competitiva de las drogas
 class InteractionNN(nn.Module):
-    def __init__(self, hidden_dim=16):
+    def __init__(self, hidden_dim=32):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(2, hidden_dim),  #Input: [A, B]
@@ -33,7 +34,7 @@ class UDEField(nn.Module):
         dB_dt = - self.k_B * B
         
         #Lo aprendido
-        nn_input = torch.cat([A, B], dim=-1)
+        nn_input = torch.cat([F.relu(A), F.relu(B)], dim=-1)
         nn_output = self.nn_interaction(nn_input)
         
         dA_dt = - torch.nn.functional.softplus(nn_output) * A
@@ -49,5 +50,5 @@ class PharmacokineticUDE(nn.Module):
         
     def forward(self, u0, t_span):
         #Se le pasa self.ude_field definido previamente
-        pred = odeint(self.ude_field, u0, t_span, method='dopri5', rtol=1e-6, atol=1e-6)
+        pred = odeint(self.ude_field, u0, t_span, method='dopri5', rtol=1e-3, atol=1e-3, options={'step_size': 0.1})
         return pred

@@ -58,7 +58,7 @@ def train_ude_alternating(model, t_span, u0, target_data, epochs_adam=300, epoch
             
     print("\nFASE 2: L-BFGS")
     #Se fija Sigma -asumiendo convergencia- y optimizamos Theta
-    lbfgs_theta = optim.LBFGS(model.parameters(), lr=0.1, max_iter=20, history_size=50)
+    lbfgs_theta = optim.LBFGS(model.parameters(), lr=0.01, max_iter=10, line_search_fn="strong_wolfe")
     
     def closure():
         lbfgs_theta.zero_grad()
