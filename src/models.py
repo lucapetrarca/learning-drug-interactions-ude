@@ -34,7 +34,8 @@ class UDEField(nn.Module):
         dB_dt = - self.k_B * B
         
         #Lo aprendido
-        nn_input = torch.cat([F.relu(A), F.relu(B)], dim=-1)
+        #Se normalizan las entradas diviendo por 100.0 para que tanh no se sature
+        nn_input = torch.cat([F.relu(A)/100.0, F.relu(B)/100.0], dim=-1)
         nn_output = self.nn_interaction(nn_input)
         
         dA_dt = - torch.nn.functional.softplus(nn_output) * A

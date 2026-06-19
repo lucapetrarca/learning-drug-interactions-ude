@@ -35,7 +35,8 @@ def train_ude_alternating(model, t_span, u0, target_data, epochs_adam=300, epoch
     }
     print("\nFASE 1: ADAM")
     #Optimización alternada (para parámetros y varianza)
-    adam_theta = optim.Adam(model.parameters(), lr=1e-2)
+    #Se agrega weight_decay=1e-4 para forzar pesos pequeños y mejorar la geometría
+    adam_theta = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-4)
     adam_sigma = optim.Adam(noise_params.values(), lr=5e-2)
     
     for epoch in range(epochs_adam):
@@ -53,7 +54,7 @@ def train_ude_alternating(model, t_span, u0, target_data, epochs_adam=300, epoch
         loss_sigma.backward()
         adam_sigma.step()
         
-        if epoch % 1000 == 0:
+        if epoch % 100 == 0:
             print(f"Época {epoch:03d} | NLL Total: {loss_theta.item():.4f}")
             
     print("\nFASE 2: L-BFGS")
@@ -69,7 +70,7 @@ def train_ude_alternating(model, t_span, u0, target_data, epochs_adam=300, epoch
 
     for epoch in range(epochs_lbfgs):
         loss_val = lbfgs_theta.step(closure)
-        if epoch % 100 == 0:
+        if epoch % 10 == 0:
             print(f"L-BFGS Paso {epoch:02d} | NLL: {loss_val.item():.6f}")
 
     #Se imprimen los valores finales del ruido

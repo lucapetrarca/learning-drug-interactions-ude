@@ -26,17 +26,19 @@ def main():
     print("[*] Inicializando UDE híbrida")
     #Se fija semilla para reproducibilidad
     torch.manual_seed(42) 
-    model = PharmacokineticUDE(hidden_dim=16)
+    #Se establecen 8 neuronas, más chico para forzar a la red a no memorizar el ruido
+    model = PharmacokineticUDE(hidden_dim=8)
 
     #Se entrena con ADAM + L-BFGS
     print("[*] Comenzando entrenamiento (Adam + L-BFGS)")
+    #Se usan 2500 épocas para Adam y 50 para L-BFGS para evitar overfitting
     model_trained, noise_params_trained = train_ude_alternating(
         model=model,
         t_span=t_span,
         u0=u0,
         target_data=target_data,
-        epochs_adam=10000,
-        epochs_lbfgs=500
+        epochs_adam=2500,
+        epochs_lbfgs=50
     )
 
     #Se guardan los parámetros a disco
